@@ -1,0 +1,52 @@
+# ==========================================
+# PROTEÇÃO CONTRA VAZAMENTO DE DADOS (CRÍTICO)
+# ==========================================
+
+# Arquivos de ambiente e variáveis sensíveis
+.env
+.env.*
+*.env
+!.env.example
+
+# Chaves criptográficas, certificados e credenciais
+*.pem
+*.key
+*.pkcs12
+*.pfx
+*.crt
+id_rsa*
+id_ed25519*
+*.pub
+
+# Credenciais de Cloud e SDKs
+oci_api_key*
+*.oci
+credentials
+config.oci
+google-credentials.json
+client_secret*.json
+
+# Bancos de dados locais e dumps
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+
+# Logs do sistema e de servidores
+*.log
+logs/
+/var/log/
+
+# Dependências e caches
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Arquivos temporários e de IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
