@@ -201,6 +201,11 @@
     function showLogin() {
         clearInterval(timerInterval);
         stopMetricsPolling();
+        
+        // Aplica o Fundo01.jpg no Login
+        document.body.classList.remove("view-dashboard");
+        document.body.classList.add("view-login");
+
         dashboardView.classList.add("hidden");
         btnNavLogout.classList.add("hidden");
         loginView.classList.remove("hidden");
@@ -209,6 +214,10 @@
     }
 
     function showDashboard(username, expiresAt) {
+        // Aplica o Fundo02.jpg no Dashboard com os painéis
+        document.body.classList.remove("view-login");
+        document.body.classList.add("view-dashboard");
+
         loginView.classList.add("hidden");
         dashboardView.classList.remove("hidden");
         btnNavLogout.classList.remove("hidden");
@@ -216,7 +225,7 @@
         clearAlert();
         startSessionTimer(expiresAt);
         startMetricsPolling();
-    }
+    } 
 
     // =========================================================================
     // FLUXO DE LOGIN COM VALIDAÇÃO VIA HASH SHA-256 E RATE LIMITING
