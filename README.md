@@ -1,50 +1,42 @@
 # Projeto Aplicado- Infraestrutura Segura e Computação em Nuvem
 
 Repositório destinado à entrega técnica do Projeto Aplicado Pratica de Mercado, demonstrando a implantação de infraestrutura segura na Oracle Cloud Infrastructure (OCI) e boas práticas de desenvolvimento seguro.
+---
 
-## 🛡️ Medidas de Segurança Implementadas
-- **Acesso Administrativo Seguro:** Acesso remoto restrito via chaves SSH (Ed25519), bloqueio do usuário `root` e desativação total de autenticação por senha.
-- **Princípio do Menor Privilégio (Firewall):** Exposição estrita das portas `22/TCP` (gerência), `80/TCP` (ACME/redirecionamento) e `443/TCP` (HTTPS).
-- **Proteção contra Força Bruta:** Monitoramento da porta SSH com Fail2Ban (tolerância máxima de 4 tentativas incorretas e banimento de 24 horas).
-- **Criptografia e HTTPS:**
-  - Redirecionamento automático 301 de HTTP para HTTPS.
-  - Certificado SSL/TLS via Let's Encrypt com autorrenovação.
-  - Avaliação **Nota A** no Qualys SSL Labs com suporte a **PQC (Post-Quantum Cryptography - X25519MLKEM768)**.
-
-## 📂 Artefatos do Projeto
 ## 🛡️ Eixo 1: Infraestrutura e Segurança de Redes
-- **Acesso Remoto:** SSH com autenticação restrita via chaves Ed25519; acesso do usuário `root` e senhas desativados no `sshd_config`.
-- **Firewall de Menor Privilégio:** Apenas as portas `22` (SSH gerenciado), `80` (ACME/HTTP) e `443` (HTTPS) liberadas via UFW e Security Lists da OCI.
-- **Defesa Ativa (Fail2Ban):** Monitoramento na porta 22 com tolerância estrita de 4 falhas e bloqueio de 24 horas via `jail.local`.
+- **Acesso Remoto Seguro:** Acesso administrativo restrito via chaves SSH assimétricas (Ed25519); autenticação por senha padrão desabilitada e login direto do usuário `root` bloqueado no `sshd_config`.
+- **Firewall de Menor Privilégio (Least Privilege):** Exposição estrita das portas essenciais `22/TCP` (gerência remota), `80/TCP` (redirecionamento/ACME) e `443/TCP` (HTTPS).
+- **Defesa Ativa (Fail2Ban):** Monitoramento da porta 22 com tolerância máxima de **4 falhas consecutivas** e tempo de **banimento de 24 horas**.
 - **Criptografia e HTTPS:**
-  - Redirecionamento automático 301 de HTTP para HTTPS.
-  - Certificado SSL/TLS Let's Encrypt com script de autorrenovação periódica.
-  - **Nota A** no Qualys SSL Labs com troca de chaves **PQC (Post-Quantum Cryptography - X25519MLKEM768)** habilitada.
+  - Redirecionamento automático 301 de todo o tráfego HTTP para HTTPS.
+  - Certificado SSL/TLS via Let's Encrypt com autorrenovação periódica.
+  - Avaliação **Nota A** no Qualys SSL Labs com suporte a **PQC (Post-Quantum Cryptography - X25519MLKEM768)** devidamente ativado.
+
+---
+
+## 📂 Eixo 2: Repositório e Gestão de Segredos
+- **Hospedagem Pública:** Código versionado publicamente no GitHub (`aristontsfilho/PROJETO-APLICADO-PRATICAS-DE-MERCADO`).
+- **Prevenção de Vazamento de Dados:** Utilização de `.gitignore` rigoroso bloqueando arquivos `.env`, chaves privadas (`*.key`, `*.pem`, `id_*`), credenciais de cloud e dumps locais.
+- **Armazenamento Seguro:** Isolamento completo de credenciais de infraestrutura utilizando o recurso **GitHub Secrets** (`SERVER_HOST`, `SERVER_USER`, `SERVER_PORT`, `SSH_PRIVATE_KEY`).
 
 ---
 
 ## 💻 Eixo 3: Protótipo de Software Web (Secure by Design)
 
-O protótipo consiste em uma Single Page Application (SPA) desenvolvida com HTML5, CSS3 e JavaScript seguro, hospedada na infraestrutura Nginx sob HTTPS.
-
-### Estrutura Funcional:
-1. **Tela de Login:** Autenticação de usuários com proteção ativa contra abuso.
-2. **Página Interna (Dashboard):** Área acessível apenas após validação de token de sessão em memória.
-3. **Logout Funcional:** Encerramento explícito com limpeza de sessão e retorno ao estado inicial.
-
----
-
-## 🛡️ Comprovação de Mitigações OWASP Top 10:2025
+Single Page Application (SPA) desenvolvida com HTML5, CSS3 e JavaScript moderno, mitigando ativamente 3 categorias do **OWASP Top 10:2025**:
 
 | Categoria OWASP Top 10:2025 | Vulnerabilidade Enfrentada | Onde e Como o Código Previne |
 | :--- | :--- | :--- |
-| **A01:2025 – Broken Access Control** | Acesso indevido a telas internas sem credencial ou via bypass de URL. | **Implementação em `app.js` (`verifySession()`):** Aplica o princípio de *deny-by-default*. Caso não exista token válido e não expirado no `sessionStorage`, o dashboard permanece oculto e o usuário é redirecionado para a tela de login. |
-| **A05:2025 – Injection (XSS)** | Execução de scripts maliciosos injetados via campos de formulário no navegador. | **Implementação em `app.js` (`sanitizeInput()` e `textContent`):** Todos os dados inseridos pelo usuário são sanitizados convertendo caracteres como `<`, `>`, `&`, `"`, `'` em entidades HTML. Não se utiliza `innerHTML`, manipulando o DOM exclusivamente através de `textContent`. |
-| **A07:2025 – Authentication Failures** | Ataques de força bruta (*brute-force*), *credential stuffing* e sequestro de sessão inativa. | **Implementação em `app.js` (`handleLogin()` e temporizador):** Sistema de *rate limiting* que bloqueia novas tentativas por 30 segundos após 3 erros consecutivos de login. Além disso, as sessões expiram automaticamente após 5 minutos de inatividade. |
+| **A01:2025 – Broken Access Control** | Acesso não autorizado a rotas/telas internas sem login. | **`app.js` (`verifySession`):** Princípio de *deny-by-default*. Sem token ativo ou com sessão inativa expirada, o dashboard permanece oculto e o usuário é forçado para o login. |
+| **A05:2025 – Injection (XSS)** | Execução arbitrária de scripts injetados em inputs de formulário. | **`app.js` (`sanitizeInput` / `textContent`):** Todos os dados inseridos são sanitizados para entidades HTML seguras, manipulando o DOM sem uso de `innerHTML`. |
+| **A07:2025 – Authentication Failures** | Ataques de força bruta e roubo de sessões abandonadas. | **`app.js` (`handleLogin`):** Limitação de tentativas (*rate limiting*) com bloqueio de 30s após 3 falhas e expiração automática de sessão por inatividade. |
 
 ---
 
-## 🚀 Como Executar Localmente ou em Produção
-1. Clone o repositório:
-   ```bash
-   git clone git@github.com:aristontsfilho/PROJETO-APLICADO-PRATICAS-DE-MERCADO.git
+## 🚀 Eixos 1, 2 e 3: Integração e Entrega Contínuas (CI/CD)
+
+O ciclo de implantação é disparado automaticamente a cada alteração:
+1. **Ambiente Local:** Escrita e testes do código na IDE assistida por IA (Antigravity).
+2. **Versionamento:** Envio das alterações para o repositório central através do comando `git push origin main`.
+3. **Pipeline no GitHub Actions:** O runner executa o arquivo `.github/workflows/deploy.yml`, recupera as chaves criptografadas via Secrets e autentica via SSH na VM da Oracle Cloud.
+4. **Deploy Automático:** O servidor atualiza os arquivos em `/var/www/projeto-aplicado/src`, refletindo as mudanças em produção sob HTTPS instantaneamente.

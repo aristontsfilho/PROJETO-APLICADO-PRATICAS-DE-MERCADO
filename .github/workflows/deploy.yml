@@ -1,0 +1,36 @@
+name: CI/CD Pipeline - Deploy Produção OCI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Automatizado via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: Executar Deploy no Servidor OCI
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            echo "🚀 Conexão estabelecida com a instância OCI. Iniciando deploy..."
+            cd /var/www/projeto-aplicado
+            
+            # Sincroniza os arquivos com a branch main do repositório
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Garante as permissões de leitura adequadas para o servidor Nginx
+            chmod -R 755 /var/www/projeto-aplicado/src
+            
+            echo "✅ Deploy concluído com sucesso em $(date)"
