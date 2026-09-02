@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <title>Protótipo Seguro - Secure by Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- TELA DE LOGIN -->
+        <section id="login-view" class="card">
+            <h2>Acesso Restrito</h2>
+            <p class="subtitle">Protótipo Web com Mitigações OWASP Top 10:2025</p>
+            
+            <div id="login-alert" class="alert hidden" role="alert"></div>
+
+            <form id="login-form" autocomplete="off">
+                <div class="form-group">
+                    <label for="username">Identificador / Usuário:</label>
+                    <input type="text" id="username" name="username" required maxlength="30" placeholder="ex: admin_sec">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password" name="password" required maxlength="50" placeholder="••••••••••••">
+                </div>
+
+                <button type="submit" id="btn-login" class="btn-primary">Entrar no Sistema</button>
+            </form>
+            <p class="demo-credentials">Credencial de demonstração: <code>admin_sec</code> / <code>Projeto2@Seguro</code></p>
+        </section>
+
+        <!-- PÁGINA INTERNA (DASHBOARD PROTEGIDO) -->
+        <section id="dashboard-view" class="card hidden">
+            <header class="dash-header">
+                <h2>Painel Administrativo Interno</h2>
+                <button id="btn-logout" class="btn-secondary">Encerrar Sessão (Logout)</button>
+            </header>
+
+            <div class="dash-content">
+                <p>Bem-vindo(a), <strong id="user-display"></strong>!</p>
+                <div class="security-badge">
+                    <span>Sessão Ativa: Autenticação Segura Verificada</span>
+                </div>
+
+                <h3>Status de Controles OWASP Top 10:2025</h3>
+                <ul class="checklist">
+                    <li><strong>A01:2025 - Broken Access Control:</strong> Acesso restrito com guarda de rota local e <em>deny-by-default</em>.</li>
+                    <li><strong>A05:2025 - Injection (XSS):</strong> Renderização protegida com sanitização e <code>textContent</code>.</li>
+                    <li><strong>A07:2025 - Authentication Failures:</strong> Rate limit local anti-brute-force e expiração automática de sessão.</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
