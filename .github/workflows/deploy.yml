@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout do Repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Executar Deploy no Servidor OCI
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
