@@ -1,60 +1,154 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <title>Protótipo Seguro - Secure by Design</title>
+    <title>Painel de Controle Seguro - Secure by Design</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="container">
-        <!-- TELA DE LOGIN -->
-        <section id="login-view" class="card">
-            <h2>Acesso Restrito</h2>
-            <p class="subtitle">Protótipo Web com Mitigações OWASP Top 10:2025</p>
-            
+    <!-- BARRA SUPERIOR -->
+    <header class="top-nav">
+        <div class="brand">
+            <span class="shield-icon">🛡️</span>
+            <span>SecOps Suite OCI</span>
+        </div>
+        <div class="nav-actions">
+            <button id="theme-toggle" class="btn-icon" aria-label="Alternar Tema"
+                title="Alternar Modo Claro/Escuro">🌙</button>
+            <button id="btn-nav-logout" class="btn-danger-sm hidden">Sair</button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- VIEW 1: TELA DE LOGIN -->
+        <section id="login-view" class="view card">
+            <h2>Autenticação Segura</h2>
+            <p class="subtitle">Acesso Restrito ao Sistema Administrativo</p>
+
             <div id="login-alert" class="alert hidden" role="alert"></div>
 
             <form id="login-form" autocomplete="off">
                 <div class="form-group">
-                    <label for="username">Identificador / Usuário:</label>
-                    <input type="text" id="username" name="username" required maxlength="30" placeholder="ex: admin_sec">
+                    <label for="username">Usuário:</label>
+                    <input type="text" id="username" name="username" required maxlength="30"
+                        placeholder="ex: admin_sec">
                 </div>
 
                 <div class="form-group">
                     <label for="password">Senha:</label>
-                    <input type="password" id="password" name="password" required maxlength="50" placeholder="••••••••••••">
+                    <input type="password" id="password" name="password" required maxlength="50"
+                        placeholder="••••••••••••">
+                    <div class="password-meter-container">
+                        <div id="password-meter-bar" class="meter-bar"></div>
+                    </div>
+                    <small id="password-feedback" class="meter-text">Digite a senha para avaliar a força</small>
                 </div>
 
                 <button type="submit" id="btn-login" class="btn-primary">Entrar no Sistema</button>
             </form>
-            <p class="demo-credentials">Credencial de demonstração: <code>admin_sec</code> / <code>Projeto2@Seguro</code></p>
-        </section>
 
-        <!-- PÁGINA INTERNA (DASHBOARD PROTEGIDO) -->
-        <section id="dashboard-view" class="card hidden">
-            <header class="dash-header">
-                <h2>Painel Administrativo Interno</h2>
-                <button id="btn-logout" class="btn-secondary">Encerrar Sessão (Logout)</button>
-            </header>
-
-            <div class="dash-content">
-                <p>Bem-vindo(a), <strong id="user-display"></strong>!</p>
-                <div class="security-badge">
-                    <span>Sessão Ativa: Autenticação Segura Verificada</span>
-                </div>
-
-                <h3>Status de Controles OWASP Top 10:2025</h3>
-                <ul class="checklist">
-                    <li><strong>A01:2025 - Broken Access Control:</strong> Acesso restrito com guarda de rota local e <em>deny-by-default</em>.</li>
-                    <li><strong>A05:2025 - Injection (XSS):</strong> Renderização protegida com sanitização e <code>textContent</code>.</li>
-                    <li><strong>A07:2025 - Authentication Failures:</strong> Rate limit local anti-brute-force e expiração automática de sessão.</li>
-                </ul>
+            <div class="demo-box">
+                <small>Credencial de demonstração: <code>admin_sec</code> / <code>Projeto2@Seguro</code></small>
             </div>
         </section>
-    </div>
+
+        <!-- VIEW 2: DASHBOARD INTERNO (ÁREA PROTEGIDA) -->
+        <section id="dashboard-view" class="view hidden">
+            <!-- Boas-vindas e Status da Sessão -->
+            <div class="dash-banner">
+                <div>
+                    <h2>Painel de Operações</h2>
+                    <p>Sessão autenticada para: <strong id="user-display"></strong></p>
+                </div>
+                <div class="session-timer-box">
+                    <small>Expiração da Sessão em:</small>
+                    <span id="session-timer" class="timer-digits">05:00</span>
+                </div>
+            </div>
+
+            <!-- CARDS DE MÉTRICAS -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-server-status">ATIVO</div>
+                    <div class="metric-label">Status da Instância OCI</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-pqc">ATIVADO</div>
+                    <div class="metric-label">Troca de Chaves PQC (TLS 1.3)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-blocked-attempts">0</div>
+                    <div class="metric-label">Tentativas Bloqueadas (Sessão)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-events-count">0</div>
+                    <div class="metric-label">Eventos Auditados</div>
+                </div>
+            </div>
+
+            <!-- UTILITÁRIOS CRIPTOGRÁFICOS -->
+            <div class="tools-grid">
+                <!-- Utilitário 1: Gerador de Hash SHA-256 -->
+                <div class="card tool-card">
+                    <h3>Integridade de Dados (Hash SHA-256)</h3>
+                    <p class="subtitle">Calculado via API Web Cryptography localmente</p>
+                    <div class="form-group">
+                        <input type="text" id="hash-input" placeholder="Digite uma mensagem ou comando...">
+                    </div>
+                    <button id="btn-hash" class="btn-secondary">Calcular Hash</button>
+                    <div class="hash-output-container">
+                        <small>Digest Hexadecimal:</small>
+                        <textarea id="hash-output" readonly rows="2"
+                            placeholder="O resultado aparecerá aqui..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Utilitário 2: Gerador de Senhas Fortes -->
+                <div class="card tool-card">
+                    <h3>Gerador de Credenciais Fortes</h3>
+                    <p class="subtitle">Entropia criptograficamente segura (CSPRNG)</p>
+                    <div class="password-gen-control">
+                        <label for="pass-length">Tamanho: <span id="pass-length-val">16</span> caracteres</label>
+                        <input type="range" id="pass-length" min="12" max="32" value="16">
+                    </div>
+                    <div class="btn-group">
+                        <button id="btn-gen-pass" class="btn-secondary">Gerar Nova Senha</button>
+                        <button id="btn-copy-pass" class="btn-secondary">Copiar</button>
+                    </div>
+                    <div class="hash-output-container">
+                        <input type="text" id="generated-pass" readonly placeholder="Senha gerada">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELA DE LOGS DE AUDITORIA -->
+            <div class="card logs-card">
+                <h3>Logs de Auditoria de Segurança (OWASP A09:2025)</h3>
+                <p class="subtitle">Registro cronológico de eventos locais auditados</p>
+                <div class="table-responsive">
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Tipo de Evento</th>
+                                <th>Severidade</th>
+                                <th>Detalhe Auditado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody">
+                            <!-- Inserido dinamicamente com sanitização -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script src="app.js"></script>
 </body>
+
 </html>
