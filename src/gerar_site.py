@@ -8,7 +8,7 @@ sections = [
     ("servidor", "Servidor"),
     ("antigravity", "Antigravity"),
     ("qualys", "Qualy SSL lab"),
-    ("hardering-nginx", "Hardering nginx")
+    ("hardening-nginx", "Hardening Nginx")
 ]
 
 for prefix, title in sections:
@@ -29,7 +29,7 @@ for prefix, title in sections:
             with open(filename, "w", encoding="utf-8") as f:
                 f.write(svg_content)
 
-print("✔ Pasta img/ verificada com segurança!")
+print("[OK] Pasta img/ verificada com segurança!")
 
 print("=== [2/6] Gerando style.css com Lightbox/Modal ===")
 style_css = """/* DEFINIÇÃO DE VARIÁVEIS E TEMAS */
@@ -774,7 +774,7 @@ button:hover, .btn-secondary:hover {
 """
 with open("style.css", "w", encoding="utf-8") as f:
     f.write(style_css)
-print("✔ style.css atualizado")
+print("[OK] style.css atualizado")
 
 print("=== [3/6] Gerando app.js com suporte ao Lightbox ===")
 app_js = """(function () {
@@ -1331,7 +1331,7 @@ app_js = """(function () {
 """
 with open("app.js", "w", encoding="utf-8") as f:
     f.write(app_js)
-print("✔ app.js atualizado com Lightbox")
+print("[OK] app.js atualizado com Lightbox")
 
 print("=== [4/6] Gerando index.html ===")
 index_html = """<!DOCTYPE html>
@@ -1543,7 +1543,7 @@ index_html = """<!DOCTYPE html>
 """
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(index_html)
-print("✔ index.html atualizado")
+print("[OK] index.html atualizado")
 
 print("=== [5/6] Gerando apresentacao.html ===")
 apresentacao_html = """<!DOCTYPE html>
@@ -1615,20 +1615,20 @@ apresentacao_html = """<!DOCTYPE html>
 """
 with open("apresentacao.html", "w", encoding="utf-8") as f:
     f.write(apresentacao_html)
-print("✔ apresentacao.html gerada")
+print("[OK] apresentacao.html gerada")
 
 print("=== [6/6] Gerando as páginas de prints com Modal Lightbox ===")
 pages_to_generate = [
-    ("github.html", "GitHub do Projeto", "github"),
-    ("servidor.html", "Servidor", "servidor"),
-    ("antigravity.html", "Antigravity", "antigravity"),
-    ("qualys.html", "Qualy SSL lab", "qualys"),
-    ("hardering-nginx.html", "Hardering nginx", "hardering-nginx")
+    ("github.html", "GitHub do Projeto", "github", 7),
+    ("servidor.html", "Servidor", "servidor", 10),
+    ("antigravity.html", "Antigravity", "antigravity", 10),
+    ("qualys.html", "Qualy SSL lab", "qualys", 5),
+    ("hardening-nginx.html", "Hardening Nginx", "hardening-nginx", 10)
 ]
 
-for filename, title, prefix in pages_to_generate:
+for filename, title, prefix, img_count in pages_to_generate:
     gallery_items_html = ""
-    for i in range(1, 11):
+    for i in range(1, img_count + 1):
         num = f"{i:02d}"
         gallery_items_html += f"""
                 <div class="gallery-item" title="Clique para ampliar no tamanho real">
@@ -1640,6 +1640,15 @@ for filename, title, prefix in pages_to_generate:
                         <span class="gallery-tag">{prefix}-{num}.jpg</span>
                     </div>
                 </div>"""
+
+    if prefix == 'github':
+        extra_button_html = '<a href="https://github.com/aristontsfilho/PROJETO-APLICADO-PRATICAS-DE-MERCADO" target="_blank" rel="noopener noreferrer" class="btn-secondary">🐙 Ir para o Git do Projeto</a>'
+    elif prefix == 'qualys':
+        extra_button_html = '<a href="https://www.ssllabs.com/ssltest/analyze.html?d=152.67.53.13.nip.io" target="_blank" rel="noopener noreferrer" class="btn-secondary">🔒 Realizar Teste Qualys SSL</a>'
+    elif prefix == 'antigravity':
+        extra_button_html = '<a href="https://github.com/aristontsfilho/PROJETO-APLICADO-PRATICAS-DE-MERCADO/tree/main/src" target="_blank" rel="noopener noreferrer" class="btn-secondary">⚡ Abrir Pasta do Site no Projeto</a>'
+    else:
+        extra_button_html = ''
 
     page_html = f"""<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
@@ -1670,7 +1679,7 @@ for filename, title, prefix in pages_to_generate:
             <a href="servidor.html" class="nav-link-btn {'active' if prefix == 'servidor' else ''}">🖥️ Servidor</a>
             <a href="antigravity.html" class="nav-link-btn {'active' if prefix == 'antigravity' else ''}">⚡ Antigravity</a>
             <a href="qualys.html" class="nav-link-btn {'active' if prefix == 'qualys' else ''}">🔒 Qualy SSL lab</a>
-            <a href="hardering-nginx.html" class="nav-link-btn {'active' if prefix == 'hardering-nginx' else ''}">🛡️ Hardering nginx</a>
+            <a href="hardening-nginx.html" class="nav-link-btn {'active' if prefix == 'hardening-nginx' else ''}">🛡️ Hardening Nginx</a>
         </div>
     </nav>
 
@@ -1679,9 +1688,12 @@ for filename, title, prefix in pages_to_generate:
             <div class="gallery-header">
                 <div>
                     <h2>{title}</h2>
-                    <p class="subtitle">Evidências técnicas e capturas de tela do ambiente de produção (clique para ampliar)</p>
+                    <p class="subtitle">Evidências técnicas e capturas de tela do repositório (clique para ampliar)</p>
                 </div>
-                <a href="index.html" class="btn-secondary">← Voltar ao Painel Geral</a>
+                <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <a href="index.html" class="btn-secondary">← Voltar ao Painel Geral</a>
+                    {extra_button_html}
+                </div>
             </div>
 
             <div class="gallery-grid">
@@ -1705,7 +1717,7 @@ for filename, title, prefix in pages_to_generate:
 """
     with open(filename, "w", encoding="utf-8") as f:
         f.write(page_html)
-    print(f"✔ Gerada página com Lightbox: {filename}")
+    print(f"[OK] Gerada página com Lightbox: {filename}")
 
 print("\n=== SUCESSO TOTAL! ===")
 print("Visualizador de imagens em tamanho real integrado com sucesso!")

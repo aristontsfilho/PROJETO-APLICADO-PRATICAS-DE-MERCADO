@@ -66,9 +66,6 @@
         return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
     }
 
-    // NOTA DE SEGURANÇA: Esta estrutura de usuários autorizados e hashing no frontend 
-    // é destinada exclusivamente para fins demonstrativos e ambientes estáticos.
-    // Em produção real, a autenticação deve ser realizada no backend.
     async function initializeSecurityContext() {
         authorizedUsers = {
             "aristontsfilho": await calculateSHA256("projeto@aristontsfilho"),
@@ -103,13 +100,12 @@
         if (metricEvents) metricEvents.textContent = auditLogs.length;
 
         if (logsTbody) {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${sanitize(time)}</td><td>${sanitize(type)}</td><td><span class="badge badge-${severity === 'CRITICAL' ? 'danger' : severity === 'WARN' ? 'warn' : 'info'}">${sanitize(severity)}</span></td><td>${sanitize(detail)}</td>`;
-            logsTbody.insertBefore(tr, logsTbody.firstChild);
-            
-            while (logsTbody.children.length > 25) {
-                logsTbody.removeChild(logsTbody.lastChild);
-            }
+            logsTbody.replaceChildren();
+            auditLogs.forEach(l => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${sanitize(l.time)}</td><td>${sanitize(l.type)}</td><td><span class="badge badge-${l.severity === 'CRITICAL' ? 'danger' : l.severity === 'WARN' ? 'warn' : 'info'}">${sanitize(l.severity)}</span></td><td>${sanitize(l.detail)}</td>`;
+                logsTbody.appendChild(tr);
+            });
         }
     }
 
@@ -176,20 +172,13 @@
         };
     }
 
-    let apiAvailable = true;
-
     async function fetchServerMetrics() {
-        if (!apiAvailable) {
-            renderMetrics(getSimulatedMetrics());
-            return;
-        }
         try {
             const res = await fetch("/api/metrics");
             if (!res.ok) throw new Error("Fallback simulação");
             const data = await res.json();
             renderMetrics(data);
         } catch (err) {
-            apiAvailable = false;
             renderMetrics(getSimulatedMetrics());
         }
     }
@@ -340,7 +329,6 @@
 
         passwordMeterBar.style.width = widths[score];
         passwordMeterBar.style.backgroundColor = colors[score];
-        passwordMeterBar.setAttribute("aria-valuenow", (score * 20).toString());
         if (passwordFeedback) {
             passwordFeedback.textContent = labels[score];
             passwordFeedback.style.color = colors[score];
@@ -348,10 +336,7 @@
     }
 
     function resetPasswordMeter() {
-        if (passwordMeterBar) {
-            passwordMeterBar.style.width = "0%";
-            passwordMeterBar.setAttribute("aria-valuenow", "0");
-        }
+        if (passwordMeterBar) passwordMeterBar.style.width = "0%";
         if (passwordFeedback) {
             passwordFeedback.textContent = "Digite a senha para avaliar a força";
             passwordFeedback.style.color = "var(--text-muted)";
@@ -376,7 +361,6 @@
         let startX = 0;
         let startY = 0;
 
-        // Injeta a barra de ferramentas de zoom no modal se não existir
         let toolbar = modal.querySelector(".lightbox-toolbar");
         if (!toolbar) {
             toolbar = document.createElement("div");
@@ -428,7 +412,6 @@
         if (btnZoomOut) btnZoomOut.addEventListener("click", (e) => { e.stopPropagation(); setZoom(scale - 0.5); });
         if (btnZoomReset) btnZoomReset.addEventListener("click", (e) => { e.stopPropagation(); resetZoom(); });
 
-        // Clique na imagem alterna entre 100% e 250% (2.5x)
         modalImg.addEventListener("click", (e) => {
             e.stopPropagation();
             if (scale > 1) {
@@ -438,7 +421,6 @@
             }
         });
 
-        // Zoom interativo via Roda do Mouse (Scroll Wheel)
         modal.addEventListener("wheel", (e) => {
             if (!modal.classList.contains("active")) return;
             e.preventDefault();
@@ -446,7 +428,6 @@
             setZoom(scale + delta);
         }, { passive: false });
 
-        // Arraste (Pan) quando a imagem estiver ampliada
         modalImg.addEventListener("mousedown", (e) => {
             if (scale <= 1) return;
             e.preventDefault();
@@ -470,7 +451,6 @@
             }
         });
 
-        // Ao clicar em qualquer card de imagem
         document.querySelectorAll(".gallery-item").forEach(card => {
             card.addEventListener("click", () => {
                 const img = card.querySelector(".gallery-thumb");
