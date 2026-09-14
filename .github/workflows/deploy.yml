@@ -24,6 +24,8 @@ jobs:
           source: "."
           target: "/var/www/app"
           strip_components: 0
+          overwrite: true
+          rm: false
 
       - name: Ajustar Permissões e Validar Nginx
         uses: appleboy/ssh-action@master
