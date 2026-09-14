@@ -36,14 +36,14 @@
             <div class="gallery-header">
                 <div>
                     <h2>Antigravity</h2>
-                    <p class="subtitle">Evidências técnicas e capturas de tela do ambiente de produção</p>
+                    <p class="subtitle">Evidências técnicas e capturas de tela do ambiente de produção (clique para ampliar)</p>
                 </div>
                 <a href="index.html" class="btn-secondary">← Voltar ao Painel Geral</a>
             </div>
 
             <div class="gallery-grid">
 
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-01.jpg" alt="Print 01 - Antigravity" loading="lazy">
                     </div>
@@ -52,7 +52,7 @@
                         <span class="gallery-tag">antigravity-01.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-02.jpg" alt="Print 02 - Antigravity" loading="lazy">
                     </div>
@@ -61,7 +61,7 @@
                         <span class="gallery-tag">antigravity-02.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-03.jpg" alt="Print 03 - Antigravity" loading="lazy">
                     </div>
@@ -70,7 +70,7 @@
                         <span class="gallery-tag">antigravity-03.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-04.jpg" alt="Print 04 - Antigravity" loading="lazy">
                     </div>
@@ -79,7 +79,7 @@
                         <span class="gallery-tag">antigravity-04.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-05.jpg" alt="Print 05 - Antigravity" loading="lazy">
                     </div>
@@ -88,7 +88,7 @@
                         <span class="gallery-tag">antigravity-05.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-06.jpg" alt="Print 06 - Antigravity" loading="lazy">
                     </div>
@@ -97,7 +97,7 @@
                         <span class="gallery-tag">antigravity-06.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-07.jpg" alt="Print 07 - Antigravity" loading="lazy">
                     </div>
@@ -106,7 +106,7 @@
                         <span class="gallery-tag">antigravity-07.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-08.jpg" alt="Print 08 - Antigravity" loading="lazy">
                     </div>
@@ -115,7 +115,7 @@
                         <span class="gallery-tag">antigravity-08.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-09.jpg" alt="Print 09 - Antigravity" loading="lazy">
                     </div>
@@ -124,7 +124,7 @@
                         <span class="gallery-tag">antigravity-09.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/antigravity-10.jpg" alt="Print 10 - Antigravity" loading="lazy">
                     </div>
@@ -136,6 +136,15 @@
             </div>
         </section>
     </main>
+
+    <!-- MODAL LIGHTBOX PARA VISUALIZAÇÃO EM TAMANHO REAL -->
+    <div id="lightbox-modal" class="lightbox-modal">
+        <button id="lightbox-close" class="lightbox-close" title="Fechar (Esc)">✕</button>
+        <div class="lightbox-content">
+            <img id="lightbox-img" class="lightbox-img" src="" alt="Imagem ampliada">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>

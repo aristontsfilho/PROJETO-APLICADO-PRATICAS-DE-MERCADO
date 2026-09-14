@@ -343,6 +343,52 @@
         }
     }
 
+    // =========================================================================
+    // INICIALIZAÇÃO DO LIGHTBOX (AMPLIAÇÃO EM TAMANHO REAL)
+    // =========================================================================
+    function setupLightbox() {
+        const modal = document.getElementById("lightbox-modal");
+        const modalImg = document.getElementById("lightbox-img");
+        const modalCaption = document.getElementById("lightbox-caption");
+        const modalClose = document.getElementById("lightbox-close");
+
+        if (!modal) return;
+
+        // Ao clicar em qualquer card de imagem
+        document.querySelectorAll(".gallery-item").forEach(card => {
+            card.addEventListener("click", () => {
+                const img = card.querySelector(".gallery-thumb");
+                const tag = card.querySelector(".gallery-tag");
+                const name = card.querySelector(".gallery-name");
+
+                if (img) {
+                    modalImg.src = img.src;
+                    modalCaption.innerHTML = `<strong>${name ? name.textContent : ''}</strong> — <span style="font-family: monospace; color: var(--primary);">${tag ? tag.textContent : ''}</span>`;
+                    modal.classList.add("active");
+                }
+            });
+        });
+
+        function closeModal() {
+            modal.classList.remove("active");
+            modalImg.src = "";
+        }
+
+        if (modalClose) modalClose.addEventListener("click", closeModal);
+
+        // Fecha ao clicar fora da imagem
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Fecha ao pressionar ESC
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && modal.classList.contains("active")) {
+                closeModal();
+            }
+        });
+    }
+
     if (loginForm) loginForm.addEventListener("submit", handleLogin);
     if (btnNavLogout) btnNavLogout.addEventListener("click", terminateSession);
     if (passwordInput) passwordInput.addEventListener("input", evaluatePasswordStrength);
@@ -400,5 +446,6 @@
 
         await initializeSecurityContext();
         verifySession();
+        setupLightbox();
     });
 })();

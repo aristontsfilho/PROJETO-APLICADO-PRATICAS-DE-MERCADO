@@ -36,14 +36,14 @@
             <div class="gallery-header">
                 <div>
                     <h2>GitHub do Projeto</h2>
-                    <p class="subtitle">Evidências técnicas e capturas de tela do ambiente de produção</p>
+                    <p class="subtitle">Evidências técnicas e capturas de tela do ambiente de produção (clique para ampliar)</p>
                 </div>
                 <a href="index.html" class="btn-secondary">← Voltar ao Painel Geral</a>
             </div>
 
             <div class="gallery-grid">
 
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-01.jpg" alt="Print 01 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -52,7 +52,7 @@
                         <span class="gallery-tag">github-01.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-02.jpg" alt="Print 02 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -61,7 +61,7 @@
                         <span class="gallery-tag">github-02.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-03.jpg" alt="Print 03 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -70,7 +70,7 @@
                         <span class="gallery-tag">github-03.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-04.jpg" alt="Print 04 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -79,7 +79,7 @@
                         <span class="gallery-tag">github-04.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-05.jpg" alt="Print 05 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -88,7 +88,7 @@
                         <span class="gallery-tag">github-05.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-06.jpg" alt="Print 06 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -97,7 +97,7 @@
                         <span class="gallery-tag">github-06.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-07.jpg" alt="Print 07 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -106,7 +106,7 @@
                         <span class="gallery-tag">github-07.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-08.jpg" alt="Print 08 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -115,7 +115,7 @@
                         <span class="gallery-tag">github-08.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-09.jpg" alt="Print 09 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -124,7 +124,7 @@
                         <span class="gallery-tag">github-09.jpg</span>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/github-10.jpg" alt="Print 10 - GitHub do Projeto" loading="lazy">
                     </div>
@@ -136,6 +136,15 @@
             </div>
         </section>
     </main>
+
+    <!-- MODAL LIGHTBOX PARA VISUALIZAÇÃO EM TAMANHO REAL -->
+    <div id="lightbox-modal" class="lightbox-modal">
+        <button id="lightbox-close" class="lightbox-close" title="Fechar (Esc)">✕</button>
+        <div class="lightbox-content">
+            <img id="lightbox-img" class="lightbox-img" src="" alt="Imagem ampliada">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>

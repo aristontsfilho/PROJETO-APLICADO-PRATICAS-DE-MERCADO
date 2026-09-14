@@ -1,6 +1,6 @@
 ﻿import os
 
-print("=== [1/6] Gerando a pasta img/ e os 50 arquivos placeholder ===")
+print("=== [1/6] Verificando pasta img/ e gerando placeholders caso faltem ===")
 os.makedirs("img", exist_ok=True)
 
 sections = [
@@ -15,7 +15,9 @@ for prefix, title in sections:
     for i in range(1, 11):
         num = f"{i:02d}"
         filename = os.path.join("img", f"{prefix}-{num}.jpg")
-        svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+        # Só cria o placeholder se o arquivo ainda não existir (não sobrescreve suas fotos reais)
+        if not os.path.exists(filename):
+            svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
   <rect width="100%" height="100%" fill="#0b1120"/>
   <rect x="20" y="20" width="760" height="410" rx="12" fill="#151e2e" stroke="#38bdf8" stroke-width="2" stroke-dasharray="8 4"/>
   <circle cx="400" cy="180" r="45" fill="#0ea5e9" opacity="0.2"/>
@@ -24,12 +26,12 @@ for prefix, title in sections:
   <text x="400" y="295" fill="#38bdf8" font-size="18" font-family="Consolas, monospace" text-anchor="middle">{prefix}-{num}.jpg</text>
   <text x="400" y="335" fill="#94a3b8" font-size="14" font-family="Segoe UI, sans-serif" text-anchor="middle">Substitua este arquivo pela sua captura de tela real</text>
 </svg>"""
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(svg_content)
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(svg_content)
 
-print("✔ 50 imagens geradas em .\\img\\")
+print("✔ Pasta img/ verificada com segurança!")
 
-print("=== [2/6] Gerando style.css ===")
+print("=== [2/6] Gerando style.css com Lightbox/Modal ===")
 style_css = """/* DEFINIÇÃO DE VARIÁVEIS E TEMAS */
 :root[data-theme="dark"] {
     --bg-main: #0b0f19;
@@ -560,12 +562,14 @@ button:hover, .btn-secondary:hover {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
 }
 
 .gallery-item:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     border-color: var(--primary);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.25);
 }
 
 .gallery-thumb-container {
@@ -576,6 +580,27 @@ button:hover, .btn-secondary:hover {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    position: relative;
+}
+
+.gallery-thumb-container::after {
+    content: "🔍 Expandir";
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(11, 15, 25, 0.8);
+    color: #38bdf8;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.gallery-item:hover .gallery-thumb-container::after {
+    opacity: 1;
 }
 
 .gallery-thumb {
@@ -603,6 +628,100 @@ button:hover, .btn-secondary:hover {
     color: var(--primary);
 }
 
+/* ==========================================================================
+   MODAL / LIGHTBOX DE IMAGEM EM TELA CHEIA
+   ========================================================================== */
+.lightbox-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 7, 13, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.lightbox-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lightbox-content {
+    max-width: 95vw;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    animation: zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-img {
+    max-width: 95vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    background: #0b0f19;
+}
+
+.lightbox-caption {
+    margin-top: 0.75rem;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.85);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--border-color);
+    color: #ffffff;
+    font-size: 1.8rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.lightbox-close:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    transform: scale(1.1);
+}
+
+/* Área de Vídeo */
 .video-wrapper {
     max-width: 900px;
     margin: 1.5rem auto 0;
@@ -653,7 +772,7 @@ with open("style.css", "w", encoding="utf-8") as f:
     f.write(style_css)
 print("✔ style.css atualizado")
 
-print("=== [3/6] Gerando app.js ===")
+print("=== [3/6] Gerando app.js com suporte ao Lightbox ===")
 app_js = """(function () {
     "use strict";
 
@@ -999,6 +1118,52 @@ app_js = """(function () {
         }
     }
 
+    // =========================================================================
+    // INICIALIZAÇÃO DO LIGHTBOX (AMPLIAÇÃO EM TAMANHO REAL)
+    // =========================================================================
+    function setupLightbox() {
+        const modal = document.getElementById("lightbox-modal");
+        const modalImg = document.getElementById("lightbox-img");
+        const modalCaption = document.getElementById("lightbox-caption");
+        const modalClose = document.getElementById("lightbox-close");
+
+        if (!modal) return;
+
+        // Ao clicar em qualquer card de imagem
+        document.querySelectorAll(".gallery-item").forEach(card => {
+            card.addEventListener("click", () => {
+                const img = card.querySelector(".gallery-thumb");
+                const tag = card.querySelector(".gallery-tag");
+                const name = card.querySelector(".gallery-name");
+
+                if (img) {
+                    modalImg.src = img.src;
+                    modalCaption.innerHTML = `<strong>${name ? name.textContent : ''}</strong> — <span style="font-family: monospace; color: var(--primary);">${tag ? tag.textContent : ''}</span>`;
+                    modal.classList.add("active");
+                }
+            });
+        });
+
+        function closeModal() {
+            modal.classList.remove("active");
+            modalImg.src = "";
+        }
+
+        if (modalClose) modalClose.addEventListener("click", closeModal);
+
+        // Fecha ao clicar fora da imagem
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Fecha ao pressionar ESC
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && modal.classList.contains("active")) {
+                closeModal();
+            }
+        });
+    }
+
     if (loginForm) loginForm.addEventListener("submit", handleLogin);
     if (btnNavLogout) btnNavLogout.addEventListener("click", terminateSession);
     if (passwordInput) passwordInput.addEventListener("input", evaluatePasswordStrength);
@@ -1056,12 +1221,13 @@ app_js = """(function () {
 
         await initializeSecurityContext();
         verifySession();
+        setupLightbox();
     });
 })();
 """
 with open("app.js", "w", encoding="utf-8") as f:
     f.write(app_js)
-print("✔ app.js atualizado")
+print("✔ app.js atualizado com Lightbox")
 
 print("=== [4/6] Gerando index.html ===")
 index_html = """<!DOCTYPE html>
@@ -1347,7 +1513,7 @@ with open("apresentacao.html", "w", encoding="utf-8") as f:
     f.write(apresentacao_html)
 print("✔ apresentacao.html gerada")
 
-print("=== [6/6] Gerando as páginas de evidências fotográficas ===")
+print("=== [6/6] Gerando as páginas de prints com Modal Lightbox ===")
 pages_to_generate = [
     ("github.html", "GitHub do Projeto", "github"),
     ("servidor.html", "Servidor", "servidor"),
@@ -1361,7 +1527,7 @@ for filename, title, prefix in pages_to_generate:
     for i in range(1, 11):
         num = f"{i:02d}"
         gallery_items_html += f"""
-                <div class="gallery-item">
+                <div class="gallery-item" title="Clique para ampliar no tamanho real">
                     <div class="gallery-thumb-container">
                         <img class="gallery-thumb" src="img/{prefix}-{num}.jpg" alt="Print {num} - {title}" loading="lazy">
                     </div>
@@ -1409,7 +1575,7 @@ for filename, title, prefix in pages_to_generate:
             <div class="gallery-header">
                 <div>
                     <h2>{title}</h2>
-                    <p class="subtitle">Evidências técnicas e capturas de tela do ambiente de produção</p>
+                    <p class="subtitle">Evidências técnicas e capturas de tela do ambiente de produção (clique para ampliar)</p>
                 </div>
                 <a href="index.html" class="btn-secondary">← Voltar ao Painel Geral</a>
             </div>
@@ -1420,12 +1586,22 @@ for filename, title, prefix in pages_to_generate:
         </section>
     </main>
 
+    <!-- MODAL LIGHTBOX PARA VISUALIZAÇÃO EM TAMANHO REAL -->
+    <div id="lightbox-modal" class="lightbox-modal">
+        <button id="lightbox-close" class="lightbox-close" title="Fechar (Esc)">✕</button>
+        <div class="lightbox-content">
+            <img id="lightbox-img" class="lightbox-img" src="" alt="Imagem ampliada">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
 """
     with open(filename, "w", encoding="utf-8") as f:
         f.write(page_html)
-    print(f"✔ Gerada página: {filename}")
+    print(f"✔ Gerada página com Lightbox: {filename}")
 
-print("\n=== CONCLUÍDO COM SUCESSO! ===")
+print("\n=== SUCESSO TOTAL! ===")
+print("Visualizador de imagens em tamanho real integrado com sucesso!")
