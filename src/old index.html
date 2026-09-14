@@ -8,29 +8,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- BARRA SUPERIOR -->
     <header class="top-nav">
-        <a href="index.html" class="brand">
+        <div class="brand">
             <span class="shield-icon">🛡️</span>
             <span>Projeto-Aplicado</span>
-        </a>
+        </div>
         <div class="nav-actions">
             <button id="theme-toggle" class="btn-icon" aria-label="Alternar Tema" title="Alternar Modo Claro/Escuro">🌙</button>
             <button id="btn-nav-logout" class="btn-danger-sm hidden">Encerrar Sessão</button>
         </div>
     </header>
 
-    <nav id="module-nav" class="sub-nav hidden">
-        <div class="sub-nav-container">
-            <a href="index.html" class="nav-link-btn active">📊 Painel Geral</a>
-            <a href="github.html" class="nav-link-btn">🐙 GitHub do Projeto</a>
-            <a href="servidor.html" class="nav-link-btn">🖥️ Servidor</a>
-            <a href="antigravity.html" class="nav-link-btn">⚡ Antigravity</a>
-            <a href="qualys.html" class="nav-link-btn">🔒 Qualy SSL lab</a>
-            <a href="hardering-nginx.html" class="nav-link-btn">🛡️ Hardering nginx</a>
-        </div>
-    </nav>
-
     <main class="main-container">
+        <!-- TELA DE LOGIN (SEM DICAS DE SENHA) -->
         <section id="login-view" class="view card">
             <h2>Autenticação Administrativa</h2>
             <p class="subtitle">Acesso Restrito ao Painel de Informação</p>
@@ -54,16 +45,9 @@
 
                 <button type="submit" id="btn-login" class="btn-primary">Acessar Painel</button>
             </form>
-
-            <div class="institution-footer">
-                <img src="Logo uncisal.jpg" alt="Logo UNCISAL" class="institution-logo">
-                <div class="institution-text">
-                    <span class="inst-acronym">UNCISAL</span>
-                    <span class="inst-fullname">Universidade Estadual de Ciências da Saúde de Alagoas</span>
-                </div>
-            </div>
         </section>
 
+        <!-- DASHBOARD PROTEGIDO COM TELEMETRIA REAL DO UBUNTU -->
         <section id="dashboard-view" class="view hidden">
             <div class="dash-banner">
                 <div>
@@ -76,6 +60,7 @@
                 </div>
             </div>
 
+            <!-- STATUS DOS SERVIÇOS DO LINUX -->
             <div class="services-status-bar">
                 <div class="srv-badge">
                     <span>Nginx Web Server:</span>
@@ -95,7 +80,9 @@
                 </div>
             </div>
 
+            <!-- GAUGES / BARRAS VISUAIS DE HARDWARE -->
             <div class="hardware-grid">
+                <!-- CPU -->
                 <div class="card hw-card">
                     <div class="hw-header">
                         <span>Processamento (CPU)</span>
@@ -107,6 +94,7 @@
                     <small class="hw-subtext">Carga de processamento da VM OCI</small>
                 </div>
 
+                <!-- MEMÓRIA RAM -->
                 <div class="card hw-card">
                     <div class="hw-header">
                         <span>Memória RAM</span>
@@ -118,6 +106,7 @@
                     <small class="hw-subtext">Livre: <span id="ram-free">--</span> (<span id="ram-percent">0%</span> em uso)</small>
                 </div>
 
+                <!-- SWAP -->
                 <div class="card hw-card">
                     <div class="hw-header">
                         <span>Memória Swap</span>
@@ -130,6 +119,7 @@
                 </div>
             </div>
 
+            <!-- MÉTRICAS OPERACIONAIS -->
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-val" id="metric-processes">--</div>
@@ -141,7 +131,7 @@
                 </div>
                 <div class="metric-card">
                     <div class="metric-val" id="metric-blocked-attempts">0</div>
-                    <div class="metric-label">Tentativas Bloqueadas</div>
+                    <div class="metric-label">Tentativas de Login Bloqueadas</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-val" id="metric-events-count">0</div>
@@ -149,6 +139,7 @@
                 </div>
             </div>
 
+            <!-- FERRAMENTAS CRIPTOGRÁFICAS -->
             <div class="tools-grid">
                 <div class="card tool-card">
                     <h3>Integridade de Dados (Hash SHA-256)</h3>
@@ -180,6 +171,7 @@
                 </div>
             </div>
 
+            <!-- LOGS DE AUDITORIA -->
             <div class="card logs-card">
                 <h3>Logs de Auditoria de Segurança (OWASP A09:2025)</h3>
                 <p class="subtitle">Registro contínuo das ações de sistema e telemetria</p>
