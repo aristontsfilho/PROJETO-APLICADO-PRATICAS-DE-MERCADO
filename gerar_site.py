@@ -1,4 +1,4 @@
-﻿import os
+import os
 
 print("=== [1/6] Gerando a pasta img/ e os 50 arquivos placeholder ===")
 os.makedirs("img", exist_ok=True)
@@ -8,20 +8,20 @@ sections = [
     ("servidor", "Servidor"),
     ("antigravity", "Antigravity"),
     ("qualys", "Qualy SSL lab"),
-    ("hardering-nginx", "Hardering nginx")
+    ("hardening-nginx", "Hardening Nginx")
 ]
 
 for prefix, title in sections:
     for i in range(1, 11):
         num = f"{i:02d}"
-        filename = os.path.join("img", f"{prefix}-{num}.jpg")
+        filename = os.path.join("img", f"{prefix}-{num}.svg")
         svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
   <rect width="100%" height="100%" fill="#0b1120"/>
   <rect x="20" y="20" width="760" height="410" rx="12" fill="#151e2e" stroke="#38bdf8" stroke-width="2" stroke-dasharray="8 4"/>
   <circle cx="400" cy="180" r="45" fill="#0ea5e9" opacity="0.2"/>
   <text x="400" y="195" fill="#38bdf8" font-size="40" font-family="Segoe UI, sans-serif" text-anchor="middle">📷</text>
   <text x="400" y="260" fill="#f8fafc" font-size="24" font-weight="bold" font-family="Segoe UI, sans-serif" text-anchor="middle">{title}</text>
-  <text x="400" y="295" fill="#38bdf8" font-size="18" font-family="Consolas, monospace" text-anchor="middle">{prefix}-{num}.jpg</text>
+  <text x="400" y="295" fill="#38bdf8" font-size="18" font-family="Consolas, monospace" text-anchor="middle">{prefix}-{num}.svg</text>
   <text x="400" y="335" fill="#94a3b8" font-size="14" font-family="Segoe UI, sans-serif" text-anchor="middle">Substitua este arquivo pela sua captura de tela real</text>
 </svg>"""
         with open(filename, "w", encoding="utf-8") as f:

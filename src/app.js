@@ -66,6 +66,9 @@
         return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
     }
 
+    // NOTA DE SEGURANÇA: Esta estrutura de usuários autorizados e hashing no frontend 
+    // é destinada exclusivamente para fins demonstrativos e ambientes estáticos.
+    // Em produção real, a autenticação deve ser realizada no backend.
     async function initializeSecurityContext() {
         authorizedUsers = {
             "aristontsfilho": await calculateSHA256("projeto@aristontsfilho"),
@@ -100,12 +103,13 @@
         if (metricEvents) metricEvents.textContent = auditLogs.length;
 
         if (logsTbody) {
-            logsTbody.replaceChildren();
-            auditLogs.forEach(l => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `<td>${sanitize(l.time)}</td><td>${sanitize(l.type)}</td><td><span class="badge badge-${l.severity === 'CRITICAL' ? 'danger' : l.severity === 'WARN' ? 'warn' : 'info'}">${sanitize(l.severity)}</span></td><td>${sanitize(l.detail)}</td>`;
-                logsTbody.appendChild(tr);
-            });
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${sanitize(time)}</td><td>${sanitize(type)}</td><td><span class="badge badge-${severity === 'CRITICAL' ? 'danger' : severity === 'WARN' ? 'warn' : 'info'}">${sanitize(severity)}</span></td><td>${sanitize(detail)}</td>`;
+            logsTbody.insertBefore(tr, logsTbody.firstChild);
+            
+            while (logsTbody.children.length > 25) {
+                logsTbody.removeChild(logsTbody.lastChild);
+            }
         }
     }
 
@@ -172,13 +176,20 @@
         };
     }
 
+    let apiAvailable = true;
+
     async function fetchServerMetrics() {
+        if (!apiAvailable) {
+            renderMetrics(getSimulatedMetrics());
+            return;
+        }
         try {
             const res = await fetch("/api/metrics");
             if (!res.ok) throw new Error("Fallback simulação");
             const data = await res.json();
             renderMetrics(data);
         } catch (err) {
+            apiAvailable = false;
             renderMetrics(getSimulatedMetrics());
         }
     }
@@ -329,6 +340,7 @@
 
         passwordMeterBar.style.width = widths[score];
         passwordMeterBar.style.backgroundColor = colors[score];
+        passwordMeterBar.setAttribute("aria-valuenow", (score * 20).toString());
         if (passwordFeedback) {
             passwordFeedback.textContent = labels[score];
             passwordFeedback.style.color = colors[score];
@@ -336,7 +348,10 @@
     }
 
     function resetPasswordMeter() {
-        if (passwordMeterBar) passwordMeterBar.style.width = "0%";
+        if (passwordMeterBar) {
+            passwordMeterBar.style.width = "0%";
+            passwordMeterBar.setAttribute("aria-valuenow", "0");
+        }
         if (passwordFeedback) {
             passwordFeedback.textContent = "Digite a senha para avaliar a força";
             passwordFeedback.style.color = "var(--text-muted)";
@@ -352,7 +367,108 @@
         const modalCaption = document.getElementById("lightbox-caption");
         const modalClose = document.getElementById("lightbox-close");
 
-        if (!modal) return;
+        if (!modal || !modalImg) return;
+
+        let scale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        // Injeta a barra de ferramentas de zoom no modal se não existir
+        let toolbar = modal.querySelector(".lightbox-toolbar");
+        if (!toolbar) {
+            toolbar = document.createElement("div");
+            toolbar.className = "lightbox-toolbar";
+            toolbar.innerHTML = `
+                <button id="lb-zoom-out" class="lightbox-btn" title="Reduzir Zoom (Scroll para baixo)">🔍 -</button>
+                <span id="lb-zoom-level" class="lightbox-zoom-level">100%</span>
+                <button id="lb-zoom-in" class="lightbox-btn" title="Ampliar Zoom (Scroll para cima)">🔍 +</button>
+                <button id="lb-zoom-reset" class="lightbox-btn" title="Restaurar Tamanho">↺ 100%</button>
+            `;
+            modal.appendChild(toolbar);
+        }
+
+        const btnZoomIn = document.getElementById("lb-zoom-in");
+        const btnZoomOut = document.getElementById("lb-zoom-out");
+        const btnZoomReset = document.getElementById("lb-zoom-reset");
+        const zoomLevelDisplay = document.getElementById("lb-zoom-level");
+
+        function updateTransform() {
+            modalImg.style.transition = isDragging ? "none" : "transform 0.15s ease-out";
+            modalImg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            if (zoomLevelDisplay) {
+                zoomLevelDisplay.textContent = `${Math.round(scale * 100)}%`;
+            }
+            if (scale > 1) {
+                modalImg.style.cursor = isDragging ? "grabbing" : "grab";
+            } else {
+                modalImg.style.cursor = "zoom-in";
+            }
+        }
+
+        function setZoom(newScale) {
+            scale = Math.min(5, Math.max(1, newScale));
+            if (scale === 1) {
+                panX = 0;
+                panY = 0;
+            }
+            updateTransform();
+        }
+
+        function resetZoom() {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+        }
+
+        if (btnZoomIn) btnZoomIn.addEventListener("click", (e) => { e.stopPropagation(); setZoom(scale + 0.5); });
+        if (btnZoomOut) btnZoomOut.addEventListener("click", (e) => { e.stopPropagation(); setZoom(scale - 0.5); });
+        if (btnZoomReset) btnZoomReset.addEventListener("click", (e) => { e.stopPropagation(); resetZoom(); });
+
+        // Clique na imagem alterna entre 100% e 250% (2.5x)
+        modalImg.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (scale > 1) {
+                resetZoom();
+            } else {
+                setZoom(2.5);
+            }
+        });
+
+        // Zoom interativo via Roda do Mouse (Scroll Wheel)
+        modal.addEventListener("wheel", (e) => {
+            if (!modal.classList.contains("active")) return;
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.25 : -0.25;
+            setZoom(scale + delta);
+        }, { passive: false });
+
+        // Arraste (Pan) quando a imagem estiver ampliada
+        modalImg.addEventListener("mousedown", (e) => {
+            if (scale <= 1) return;
+            e.preventDefault();
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+            updateTransform();
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            updateTransform();
+        });
+
+        window.addEventListener("mouseup", () => {
+            if (isDragging) {
+                isDragging = false;
+                updateTransform();
+            }
+        });
 
         // Ao clicar em qualquer card de imagem
         document.querySelectorAll(".gallery-item").forEach(card => {
@@ -362,8 +478,11 @@
                 const name = card.querySelector(".gallery-name");
 
                 if (img) {
+                    resetZoom();
                     modalImg.src = img.src;
-                    modalCaption.innerHTML = `<strong>${name ? name.textContent : ''}</strong> — <span style="font-family: monospace; color: var(--primary);">${tag ? tag.textContent : ''}</span>`;
+                    if (modalCaption) {
+                        modalCaption.innerHTML = `<strong>${name ? name.textContent : ''}</strong> — <span style="font-family: monospace; color: var(--primary);">${tag ? tag.textContent : ''}</span>`;
+                    }
                     modal.classList.add("active");
                 }
             });
@@ -371,17 +490,18 @@
 
         function closeModal() {
             modal.classList.remove("active");
+            resetZoom();
             modalImg.src = "";
         }
 
         if (modalClose) modalClose.addEventListener("click", closeModal);
 
-        // Fecha ao clicar fora da imagem
         modal.addEventListener("click", (e) => {
-            if (e.target === modal) closeModal();
+            if (e.target === modal || e.target.classList.contains("lightbox-content")) {
+                closeModal();
+            }
         });
 
-        // Fecha ao pressionar ESC
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape" && modal.classList.contains("active")) {
                 closeModal();
