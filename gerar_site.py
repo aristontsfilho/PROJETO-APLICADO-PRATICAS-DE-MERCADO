@@ -273,22 +273,26 @@ input:focus, textarea:focus {
 }
 
 .institution-footer {
-    margin-top: 1.5rem;
-    padding-top: 1.2rem;
-    border-top: 1px dashed var(--border-color);
+    margin-top: 1.75rem;
+    padding: 0.9rem 1.1rem;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
-    gap: 0.9rem;
+    gap: 1.1rem;
 }
 
 .institution-logo {
-    width: 52px;
-    height: auto;
+    height: 48px;
+    width: auto;
     object-fit: contain;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 4px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    background: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
 }
 
 .institution-text {
@@ -301,12 +305,13 @@ input:focus, textarea:focus {
     font-weight: 800;
     color: var(--primary);
     letter-spacing: 0.05em;
+    line-height: 1.2;
 }
 
 .inst-fullname {
-    font-size: 0.75rem;
+    font-size: 0.74rem;
     color: var(--text-muted);
-    line-height: 1.3;
+    line-height: 1.35;
 }
 
 button, .btn-secondary {
@@ -1344,7 +1349,7 @@ index_html = """<!DOCTYPE html>
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Painel Administrativo OCI - Projeto-Aplicado</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
     <header class="top-nav">
@@ -1559,7 +1564,7 @@ apresentacao_html = """<!DOCTYPE html>
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Apresentação - Projeto-Aplicado</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="view-dashboard">
     <header class="top-nav">
@@ -1666,7 +1671,7 @@ for filename, title, prefix, img_count in pages_to_generate:
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>{title} - Projeto-Aplicado</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="view-dashboard">
     <header class="top-nav">
