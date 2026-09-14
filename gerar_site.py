@@ -4,15 +4,15 @@ print("=== [1/6] Verificando pasta img/ e gerando placeholders caso faltem ===")
 os.makedirs("img", exist_ok=True)
 
 sections = [
-    ("github", "GitHub do Projeto"),
-    ("servidor", "Servidor"),
-    ("antigravity", "Antigravity"),
-    ("qualys", "Qualy SSL lab"),
-    ("hardening-nginx", "Hardening Nginx")
+    ("github", "GitHub do Projeto", 7),
+    ("servidor", "Servidor", 8),
+    ("antigravity", "Antigravity", 10),
+    ("qualys", "Qualy SSL lab", 5),
+    ("hardening-nginx", "Hardening Nginx", 4)
 ]
 
-for prefix, title in sections:
-    for i in range(1, 11):
+for prefix, title, img_count in sections:
+    for i in range(1, img_count + 1):
         num = f"{i:02d}"
         filename = os.path.join("img", f"{prefix}-{num}.jpg")
         # Só cria o placeholder se o arquivo ainda não existir (não sobrescreve suas fotos reais)
@@ -1340,6 +1340,9 @@ index_html = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Painel Administrativo OCI - Projeto-Aplicado</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -1357,13 +1360,13 @@ index_html = """<!DOCTYPE html>
 
     <nav id="module-nav" class="sub-nav hidden">
         <div class="sub-nav-container">
-            <a href="index.html" class="nav-link-btn active">📊 Painel Geral</a>
-            <a href="apresentacao.html" class="nav-link-btn">🎥 Apresentação</a>
-            <a href="github.html" class="nav-link-btn">🐙 GitHub do Projeto</a>
-            <a href="servidor.html" class="nav-link-btn">🖥️ Servidor</a>
-            <a href="antigravity.html" class="nav-link-btn">⚡ Antigravity</a>
-            <a href="qualys.html" class="nav-link-btn">🔒 Qualy SSL lab</a>
-            <a href="hardening-nginx.html" class="nav-link-btn">🛡️ Hardening Nginx</a>
+            <a href="index.html?v=8" class="nav-link-btn active">📊 Painel Geral</a>
+            <a href="apresentacao.html?v=8" class="nav-link-btn">🎥 Apresentação</a>
+            <a href="github.html?v=8" class="nav-link-btn">🐙 GitHub do Projeto</a>
+            <a href="servidor.html?v=8" class="nav-link-btn">🖥️ Servidor</a>
+            <a href="antigravity.html?v=8" class="nav-link-btn">⚡ Antigravity</a>
+            <a href="qualys.html?v=8" class="nav-link-btn">🔒 Qualy SSL lab</a>
+            <a href="hardening-nginx.html?v=8" class="nav-link-btn">🛡️ Hardening Nginx</a>
         </div>
     </nav>
 
@@ -1552,6 +1555,9 @@ apresentacao_html = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Apresentação - Projeto-Aplicado</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -1569,13 +1575,13 @@ apresentacao_html = """<!DOCTYPE html>
 
     <nav id="module-nav" class="sub-nav">
         <div class="sub-nav-container">
-            <a href="index.html" class="nav-link-btn">📊 Painel Geral</a>
-            <a href="apresentacao.html" class="nav-link-btn active">🎥 Apresentação</a>
-            <a href="github.html" class="nav-link-btn">🐙 GitHub do Projeto</a>
-            <a href="servidor.html" class="nav-link-btn">🖥️ Servidor</a>
-            <a href="antigravity.html" class="nav-link-btn">⚡ Antigravity</a>
-            <a href="qualys.html" class="nav-link-btn">🔒 Qualy SSL lab</a>
-            <a href="hardening-nginx.html" class="nav-link-btn">🛡️ Hardening Nginx</a>
+            <a href="index.html?v=8" class="nav-link-btn">📊 Painel Geral</a>
+            <a href="apresentacao.html?v=8" class="nav-link-btn active">🎥 Apresentação</a>
+            <a href="github.html?v=8" class="nav-link-btn">🐙 GitHub do Projeto</a>
+            <a href="servidor.html?v=8" class="nav-link-btn">🖥️ Servidor</a>
+            <a href="antigravity.html?v=8" class="nav-link-btn">⚡ Antigravity</a>
+            <a href="qualys.html?v=8" class="nav-link-btn">🔒 Qualy SSL lab</a>
+            <a href="hardening-nginx.html?v=8" class="nav-link-btn">🛡️ Hardening Nginx</a>
         </div>
     </nav>
 
@@ -1620,10 +1626,10 @@ print("[OK] apresentacao.html gerada")
 print("=== [6/6] Gerando as páginas de prints com Modal Lightbox ===")
 pages_to_generate = [
     ("github.html", "GitHub do Projeto", "github", 7),
-    ("servidor.html", "Servidor", "servidor", 10),
+    ("servidor.html", "Servidor", "servidor", 8),
     ("antigravity.html", "Antigravity", "antigravity", 10),
     ("qualys.html", "Qualy SSL lab", "qualys", 5),
-    ("hardening-nginx.html", "Hardening Nginx", "hardening-nginx", 10)
+    ("hardening-nginx.html", "Hardening Nginx", "hardening-nginx", 4)
 ]
 
 for filename, title, prefix, img_count in pages_to_generate:
@@ -1656,6 +1662,9 @@ for filename, title, prefix, img_count in pages_to_generate:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>{title} - Projeto-Aplicado</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -1673,13 +1682,13 @@ for filename, title, prefix, img_count in pages_to_generate:
 
     <nav id="module-nav" class="sub-nav">
         <div class="sub-nav-container">
-            <a href="index.html" class="nav-link-btn">📊 Painel Geral</a>
-            <a href="apresentacao.html" class="nav-link-btn">🎥 Apresentação</a>
-            <a href="github.html" class="nav-link-btn {'active' if prefix == 'github' else ''}">🐙 GitHub do Projeto</a>
-            <a href="servidor.html" class="nav-link-btn {'active' if prefix == 'servidor' else ''}">🖥️ Servidor</a>
-            <a href="antigravity.html" class="nav-link-btn {'active' if prefix == 'antigravity' else ''}">⚡ Antigravity</a>
-            <a href="qualys.html" class="nav-link-btn {'active' if prefix == 'qualys' else ''}">🔒 Qualy SSL lab</a>
-            <a href="hardening-nginx.html" class="nav-link-btn {'active' if prefix == 'hardening-nginx' else ''}">🛡️ Hardening Nginx</a>
+            <a href="index.html?v=8" class="nav-link-btn">📊 Painel Geral</a>
+            <a href="apresentacao.html?v=8" class="nav-link-btn">🎥 Apresentação</a>
+            <a href="github.html?v=8" class="nav-link-btn {'active' if prefix == 'github' else ''}">🐙 GitHub do Projeto</a>
+            <a href="servidor.html?v=8" class="nav-link-btn {'active' if prefix == 'servidor' else ''}">🖥️ Servidor</a>
+            <a href="antigravity.html?v=8" class="nav-link-btn {'active' if prefix == 'antigravity' else ''}">⚡ Antigravity</a>
+            <a href="qualys.html?v=8" class="nav-link-btn {'active' if prefix == 'qualys' else ''}">🔒 Qualy SSL lab</a>
+            <a href="hardening-nginx.html?v=8" class="nav-link-btn {'active' if prefix == 'hardening-nginx' else ''}">🛡️ Hardening Nginx</a>
         </div>
     </nav>
 
