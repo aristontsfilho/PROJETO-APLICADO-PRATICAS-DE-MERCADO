@@ -48,11 +48,11 @@ body {
 }
 
 body.view-login {
-    background-image: linear-gradient(rgba(11, 15, 25, 0.72), rgba(11, 15, 25, 0.85)), url("Fundo01.jpg");
+    background-image: linear-gradient(rgba(11, 15, 25, 0.72), rgba(11, 15, 25, 0.85)), url("img/Fundo01.jpg");
 }
 
 body.view-dashboard {
-    background-image: linear-gradient(rgba(11, 15, 25, 0.78), rgba(11, 15, 25, 0.88)), url("Fundo02.jpg");
+    background-image: linear-gradient(rgba(11, 15, 25, 0.78), rgba(11, 15, 25, 0.88)), url("img/Fundo02.jpg");
 }
 
 .top-nav {
@@ -248,13 +248,14 @@ input:focus, textarea:focus {
 }
 
 .institution-logo {
-    width: 52px;
-    height: auto;
+    width: 60px;
+    height: 60px;
     object-fit: contain;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 4px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    background: #ffffff;
+    padding: 6px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-color);
 }
 
 .institution-text {
