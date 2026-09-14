@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Deploy Produção OCI
+name: Deploy Producao OCI
 
 on:
   push:
@@ -12,25 +12,28 @@ jobs:
 
     steps:
       - name: Checkout do Repositório
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Executar Deploy no Servidor OCI
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Sincronizar Arquivos com a VM via Rsync/SSH
+        uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          port: ${{ secrets.SERVER_PORT }}
-          username: ${{ secrets.SERVER_USER }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script_stop: true
+          port: ${{ secrets.SSH_PORT }}
+          source: "./*"
+          target: "/var/www/app"
+          strip_components: 0
+
+      - name: Ajustar Permissões e Validar Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "🚀 Conexão estabelecida com a instância OCI. Iniciando deploy..."
-            cd /var/www/projeto-aplicado
-            
-            # Sincroniza os arquivos com a branch main do repositório
-            git fetch origin main
-            git reset --hard origin/main
-            
-            # Garante as permissões de leitura adequadas para o servidor Nginx
-            chmod -R 755 /var/www/projeto-aplicado/src
-            
-            echo "✅ Deploy concluído com sucesso em $(date)"
+            sudo chown -R ariston:www-data /var/www/app
+            sudo chmod -R 775 /var/www/app
+            sudo nginx -t
+            sudo systemctl reload nginx
