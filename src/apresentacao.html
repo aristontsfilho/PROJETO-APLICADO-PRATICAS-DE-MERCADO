@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <title>Apresentação - Projeto-Aplicado</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="view-dashboard">
+    <header class="top-nav">
+        <a href="index.html" class="brand">
+            <span class="shield-icon">🛡️</span>
+            <span>Projeto-Aplicado</span>
+        </a>
+        <div class="nav-actions">
+            <button id="theme-toggle" class="btn-icon" aria-label="Alternar Tema" title="Alternar Modo Claro/Escuro">🌙</button>
+            <button id="btn-nav-logout" class="btn-danger-sm">Encerrar Sessão</button>
+        </div>
+    </header>
+
+    <nav id="module-nav" class="sub-nav">
+        <div class="sub-nav-container">
+            <a href="index.html" class="nav-link-btn">📊 Painel Geral</a>
+            <a href="apresentacao.html" class="nav-link-btn active">🎥 Apresentação</a>
+            <a href="github.html" class="nav-link-btn">🐙 GitHub do Projeto</a>
+            <a href="servidor.html" class="nav-link-btn">🖥️ Servidor</a>
+            <a href="antigravity.html" class="nav-link-btn">⚡ Antigravity</a>
+            <a href="qualys.html" class="nav-link-btn">🔒 Qualy SSL lab</a>
+            <a href="hardering-nginx.html" class="nav-link-btn">🛡️ Hardering nginx</a>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <section class="card">
+            <div class="gallery-header">
+                <div>
+                    <h2>Vídeo de Apresentação Técnica</h2>
+                    <p class="subtitle">Demonstração operacional do protótipo e defesas de segurança implementadas</p>
+                </div>
+                <a href="index.html" class="btn-secondary">← Voltar ao Painel Geral</a>
+            </div>
+
+            <div class="video-wrapper">
+                <video class="video-player" controls preload="metadata" poster="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect fill='%230b1120' width='100%25' height='100%25'/%3E%3Ccircle cx='400' cy='225' r='50' fill='%230ea5e9' opacity='0.3'/%3E%3Cpolygon points='385,200 425,225 385,250' fill='%2338bdf8'/%3E%3Ctext fill='%23f8fafc' font-family='sans-serif' font-size='22' font-weight='bold' x='50%25' y='72%25' text-anchor='middle'%3EApresentação 01%3C/text%3E%3Ctext fill='%2394a3b8' font-family='monospace' font-size='14' x='50%25' y='80%25' text-anchor='middle'%3Eapresentacao-01.mp4%3C/text%3E%3C/svg%3E">
+                    <source src="apresentacao-01.mp4" type="video/mp4">
+                    Seu navegador não suporta a tag de vídeo HTML5.
+                </video>
+            </div>
+
+            <div class="video-info-box">
+                <div>
+                    <strong style="color: var(--primary);">Arquivo de Mídia:</strong>
+                    <span style="font-family: monospace; font-size: 0.85rem; color: var(--text-main);">apresentacao-01.mp4</span>
+                </div>
+                <div>
+                    <span class="badge badge-info">Apresentação 01</span>
+                    <span class="badge badge-success">HD 1080p</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

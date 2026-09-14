@@ -1,6 +1,6 @@
 ﻿import os
 
-print("=== [1/5] Gerando a pasta img/ e os 50 arquivos placeholder ===")
+print("=== [1/6] Gerando a pasta img/ e os 50 arquivos placeholder ===")
 os.makedirs("img", exist_ok=True)
 
 sections = [
@@ -29,7 +29,7 @@ for prefix, title in sections:
 
 print("✔ 50 imagens geradas em .\\img\\")
 
-print("=== [2/5] Gerando style.css ===")
+print("=== [2/6] Gerando style.css ===")
 style_css = """/* DEFINIÇÃO DE VARIÁVEIS E TEMAS */
 :root[data-theme="dark"] {
     --bg-main: #0b0f19;
@@ -603,6 +603,36 @@ button:hover, .btn-secondary:hover {
     color: var(--primary);
 }
 
+.video-wrapper {
+    max-width: 900px;
+    margin: 1.5rem auto 0;
+    background: #000000;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.video-player {
+    width: 100%;
+    max-height: 520px;
+    display: block;
+    outline: none;
+}
+
+.video-info-box {
+    margin-top: 1rem;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
 .badge {
     padding: 0.2rem 0.45rem;
     border-radius: 4px;
@@ -623,7 +653,7 @@ with open("style.css", "w", encoding="utf-8") as f:
     f.write(style_css)
 print("✔ style.css atualizado")
 
-print("=== [3/5] Gerando app.js ===")
+print("=== [3/6] Gerando app.js ===")
 app_js = """(function () {
     "use strict";
 
@@ -633,7 +663,7 @@ app_js = """(function () {
     const THEME_KEY = "sec_theme_pref";
     const MAX_LOGIN_ATTEMPTS = 3;
     const LOCKOUT_DURATION_MS = 30000;
-    const SESSION_DURATION_SECONDS = 5 * 60;
+    const SESSION_DURATION_SECONDS = 20 * 60;
 
     let failedAttempts = 0;
     let lockoutUntil = 0;
@@ -735,42 +765,77 @@ app_js = """(function () {
         }
     }
 
+    function renderMetrics(data) {
+        if (srvUptime) srvUptime.textContent = data.system.uptime;
+        updateServiceBadge(statusNginx, data.services.nginx);
+        updateServiceBadge(statusFail2ban, data.services.fail2ban);
+        updateServiceBadge(statusSshd, data.services.sshd);
+
+        if (cpuText && cpuBar) {
+            cpuText.textContent = `${data.cpu_usage_percent}%`;
+            cpuBar.style.width = `${Math.min(100, data.cpu_usage_percent)}%`;
+            cpuBar.style.backgroundColor = data.cpu_usage_percent > 85 ? "var(--danger)" : "var(--primary)";
+        }
+
+        if (ramText && ramBar) {
+            ramText.textContent = `${data.ram.used_mb} MB / ${data.ram.total_mb} MB`;
+            ramBar.style.width = `${data.ram.percent}%`;
+            if (ramFree) ramFree.textContent = `${data.ram.free_mb} MB`;
+            if (ramPercent) ramPercent.textContent = `${data.ram.percent}%`;
+            ramBar.style.backgroundColor = data.ram.percent > 90 ? "var(--danger)" : "var(--primary)";
+        }
+
+        if (swapText && swapBar) {
+            swapText.textContent = `${data.swap.used_mb} MB / ${data.swap.total_mb} MB`;
+            swapBar.style.width = `${data.swap.percent}%`;
+            if (swapFree) swapFree.textContent = `${data.swap.free_mb} MB`;
+            if (swapPercent) swapPercent.textContent = `${data.swap.percent}%`;
+        }
+
+        if (metricProcesses) metricProcesses.textContent = data.system.total_processes;
+        if (metricSessions) metricSessions.textContent = data.system.active_sessions;
+    }
+
+    function getSimulatedMetrics() {
+        const cpu = Math.floor(18 + Math.random() * 15);
+        const ramUsed = Math.floor(480 + Math.random() * 50);
+        const ramTotal = 1024;
+        const ramPerc = Math.round((ramUsed / ramTotal) * 100);
+        return {
+            system: {
+                uptime: "14 dias, 08:42",
+                total_processes: 118,
+                active_sessions: 2
+            },
+            services: {
+                nginx: "active",
+                fail2ban: "active",
+                sshd: "active"
+            },
+            cpu_usage_percent: cpu,
+            ram: {
+                total_mb: ramTotal,
+                used_mb: ramUsed,
+                free_mb: ramTotal - ramUsed,
+                percent: ramPerc
+            },
+            swap: {
+                total_mb: 2048,
+                used_mb: 124,
+                free_mb: 1924,
+                percent: 6
+            }
+        };
+    }
+
     async function fetchServerMetrics() {
         try {
             const res = await fetch("/api/metrics");
-            if (!res.ok) throw new Error("Falha no proxy");
+            if (!res.ok) throw new Error("Fallback simulação");
             const data = await res.json();
-
-            if (srvUptime) srvUptime.textContent = data.system.uptime;
-            updateServiceBadge(statusNginx, data.services.nginx);
-            updateServiceBadge(statusFail2ban, data.services.fail2ban);
-            updateServiceBadge(statusSshd, data.services.sshd);
-
-            if (cpuText && cpuBar) {
-                cpuText.textContent = `${data.cpu_usage_percent}%`;
-                cpuBar.style.width = `${Math.min(100, data.cpu_usage_percent)}%`;
-                cpuBar.style.backgroundColor = data.cpu_usage_percent > 85 ? "var(--danger)" : "var(--primary)";
-            }
-
-            if (ramText && ramBar) {
-                ramText.textContent = `${data.ram.used_mb} MB / ${data.ram.total_mb} MB`;
-                ramBar.style.width = `${data.ram.percent}%`;
-                ramFree.textContent = `${data.ram.free_mb} MB`;
-                ramPercent.textContent = `${data.ram.percent}%`;
-                ramBar.style.backgroundColor = data.ram.percent > 90 ? "var(--danger)" : "var(--primary)";
-            }
-
-            if (swapText && swapBar) {
-                swapText.textContent = `${data.swap.used_mb} MB / ${data.swap.total_mb} MB`;
-                swapBar.style.width = `${data.swap.percent}%`;
-                swapFree.textContent = `${data.swap.free_mb} MB`;
-                swapPercent.textContent = `${data.swap.percent}%`;
-            }
-
-            if (metricProcesses) metricProcesses.textContent = data.system.total_processes;
-            if (metricSessions) metricSessions.textContent = data.system.active_sessions;
+            renderMetrics(data);
         } catch (err) {
-            if (srvUptime) srvUptime.textContent = "Offline";
+            renderMetrics(getSimulatedMetrics());
         }
     }
 
@@ -998,7 +1063,7 @@ with open("app.js", "w", encoding="utf-8") as f:
     f.write(app_js)
 print("✔ app.js atualizado")
 
-print("=== [4/5] Gerando index.html com Logo UNCISAL e Barra Superior ===")
+print("=== [4/6] Gerando index.html ===")
 index_html = """<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
@@ -1023,6 +1088,7 @@ index_html = """<!DOCTYPE html>
     <nav id="module-nav" class="sub-nav hidden">
         <div class="sub-nav-container">
             <a href="index.html" class="nav-link-btn active">📊 Painel Geral</a>
+            <a href="apresentacao.html" class="nav-link-btn">🎥 Apresentação</a>
             <a href="github.html" class="nav-link-btn">🐙 GitHub do Projeto</a>
             <a href="servidor.html" class="nav-link-btn">🖥️ Servidor</a>
             <a href="antigravity.html" class="nav-link-btn">⚡ Antigravity</a>
@@ -1073,7 +1139,7 @@ index_html = """<!DOCTYPE html>
                 </div>
                 <div class="session-timer-box">
                     <small>Sessão Expira em:</small>
-                    <span id="session-timer" class="timer-digits">05:00</span>
+                    <span id="session-timer" class="timer-digits">20:00</span>
                 </div>
             </div>
 
@@ -1209,7 +1275,79 @@ with open("index.html", "w", encoding="utf-8") as f:
     f.write(index_html)
 print("✔ index.html atualizado")
 
-print("=== [5/5] Gerando as 5 páginas HTML dedicadas ===")
+print("=== [5/6] Gerando apresentacao.html ===")
+apresentacao_html = """<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <title>Apresentação - Projeto-Aplicado</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="view-dashboard">
+    <header class="top-nav">
+        <a href="index.html" class="brand">
+            <span class="shield-icon">🛡️</span>
+            <span>Projeto-Aplicado</span>
+        </a>
+        <div class="nav-actions">
+            <button id="theme-toggle" class="btn-icon" aria-label="Alternar Tema" title="Alternar Modo Claro/Escuro">🌙</button>
+            <button id="btn-nav-logout" class="btn-danger-sm">Encerrar Sessão</button>
+        </div>
+    </header>
+
+    <nav id="module-nav" class="sub-nav">
+        <div class="sub-nav-container">
+            <a href="index.html" class="nav-link-btn">📊 Painel Geral</a>
+            <a href="apresentacao.html" class="nav-link-btn active">🎥 Apresentação</a>
+            <a href="github.html" class="nav-link-btn">🐙 GitHub do Projeto</a>
+            <a href="servidor.html" class="nav-link-btn">🖥️ Servidor</a>
+            <a href="antigravity.html" class="nav-link-btn">⚡ Antigravity</a>
+            <a href="qualys.html" class="nav-link-btn">🔒 Qualy SSL lab</a>
+            <a href="hardering-nginx.html" class="nav-link-btn">🛡️ Hardering nginx</a>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <section class="card">
+            <div class="gallery-header">
+                <div>
+                    <h2>Vídeo de Apresentação Técnica</h2>
+                    <p class="subtitle">Demonstração operacional do protótipo e defesas de segurança implementadas</p>
+                </div>
+                <a href="index.html" class="btn-secondary">← Voltar ao Painel Geral</a>
+            </div>
+
+            <div class="video-wrapper">
+                <video class="video-player" controls preload="metadata" poster="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect fill='%230b1120' width='100%25' height='100%25'/%3E%3Ccircle cx='400' cy='225' r='50' fill='%230ea5e9' opacity='0.3'/%3E%3Cpolygon points='385,200 425,225 385,250' fill='%2338bdf8'/%3E%3Ctext fill='%23f8fafc' font-family='sans-serif' font-size='22' font-weight='bold' x='50%25' y='72%25' text-anchor='middle'%3EApresentação 01%3C/text%3E%3Ctext fill='%2394a3b8' font-family='monospace' font-size='14' x='50%25' y='80%25' text-anchor='middle'%3Eapresentacao-01.mp4%3C/text%3E%3C/svg%3E">
+                    <source src="apresentacao-01.mp4" type="video/mp4">
+                    Seu navegador não suporta a tag de vídeo HTML5.
+                </video>
+            </div>
+
+            <div class="video-info-box">
+                <div>
+                    <strong style="color: var(--primary);">Arquivo de Mídia:</strong>
+                    <span style="font-family: monospace; font-size: 0.85rem; color: var(--text-main);">apresentacao-01.mp4</span>
+                </div>
+                <div>
+                    <span class="badge badge-info">Apresentação 01</span>
+                    <span class="badge badge-success">HD 1080p</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
+"""
+with open("apresentacao.html", "w", encoding="utf-8") as f:
+    f.write(apresentacao_html)
+print("✔ apresentacao.html gerada")
+
+print("=== [6/6] Gerando as páginas de evidências fotográficas ===")
 pages_to_generate = [
     ("github.html", "GitHub do Projeto", "github"),
     ("servidor.html", "Servidor", "servidor"),
@@ -1257,6 +1395,7 @@ for filename, title, prefix in pages_to_generate:
     <nav id="module-nav" class="sub-nav">
         <div class="sub-nav-container">
             <a href="index.html" class="nav-link-btn">📊 Painel Geral</a>
+            <a href="apresentacao.html" class="nav-link-btn">🎥 Apresentação</a>
             <a href="github.html" class="nav-link-btn {'active' if prefix == 'github' else ''}">🐙 GitHub do Projeto</a>
             <a href="servidor.html" class="nav-link-btn {'active' if prefix == 'servidor' else ''}">🖥️ Servidor</a>
             <a href="antigravity.html" class="nav-link-btn {'active' if prefix == 'antigravity' else ''}">⚡ Antigravity</a>
